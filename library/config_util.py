@@ -569,13 +569,13 @@ def generate_dataset_group_by_blueprint(dataset_group_blueprint: DatasetGroupBlu
                     "    ",
                 )
 
-    logger.info(f"{info}")
+    print(f"{info}")
 
     # make buckets first because it determines the length of dataset
     # and set the same seed for all datasets
     seed = random.randint(0, 2**31)  # actual seed is seed + epoch_no
     for i, dataset in enumerate(datasets):
-        logger.info(f"[Dataset {i}]")
+        print(f"[Dataset {i}]")
         dataset.make_buckets()
         dataset.set_seed(seed)
 
@@ -588,7 +588,7 @@ def generate_dreambooth_subsets_config_by_subdirs(train_data_dir: Optional[str] 
         try:
             n_repeats = int(tokens[0])
         except ValueError as e:
-            logger.warning(f"ignore directory without repeats / 繰り返し回数のないディレクトリを無視します: {name}")
+            print(f"ignore directory without repeats / 繰り返し回数のないディレクトリを無視します: {name}")
             return 0, ""
         caption_by_folder = "_".join(tokens[1:])
         return n_repeats, caption_by_folder
@@ -696,26 +696,26 @@ if __name__ == "__main__":
     argparse_namespace = parser.parse_args(remain)
     train_util.prepare_dataset_args(argparse_namespace, config_args.support_finetuning)
 
-    logger.info("[argparse_namespace]")
-    logger.info(f"{vars(argparse_namespace)}")
+    print("[argparse_namespace]")
+    print(f"{vars(argparse_namespace)}")
 
     user_config = load_user_config(config_args.dataset_config)
 
-    logger.info("")
-    logger.info("[user_config]")
-    logger.info(f"{user_config}")
+    print("")
+    print("[user_config]")
+    print(f"{user_config}")
 
     sanitizer = ConfigSanitizer(
         config_args.support_dreambooth, config_args.support_finetuning, config_args.support_controlnet, config_args.support_dropout
     )
     sanitized_user_config = sanitizer.sanitize_user_config(user_config)
 
-    logger.info("")
-    logger.info("[sanitized_user_config]")
-    logger.info(f"{sanitized_user_config}")
+    print("")
+    print("[sanitized_user_config]")
+    print(f"{sanitized_user_config}")
 
     blueprint = BlueprintGenerator(sanitizer).generate(user_config, argparse_namespace)
 
-    logger.info("")
-    logger.info("[blueprint]")
-    logger.info(f"{blueprint}")
+    print("")
+    print("[blueprint]")
+    print(f"{blueprint}")

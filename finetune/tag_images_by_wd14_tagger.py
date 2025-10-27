@@ -92,7 +92,7 @@ def main(args):
     # https://github.com/toriato/stable-diffusion-webui-wd14-tagger/issues/22
     if not os.path.exists(model_location) or args.force_download:
         os.makedirs(args.model_dir, exist_ok=True)
-        logger.info(f"downloading wd14 tagger model from hf_hub. id: {args.repo_id}")
+        print(f"downloading wd14 tagger model from hf_hub. id: {args.repo_id}")
         files = FILES
         if args.onnx:
             files = ["selected_tags.csv"]
@@ -110,7 +110,7 @@ def main(args):
         for file in files:
             hf_hub_download(args.repo_id, file, cache_dir=model_location, force_download=True, force_filename=file)
     else:
-        logger.info("using existing wd14 tagger model")
+        print("using existing wd14 tagger model")
 
     # モデルを読み込む
     if args.onnx:
@@ -118,8 +118,8 @@ def main(args):
         import onnxruntime as ort
 
         onnx_path = f"{model_location}/model.onnx"
-        logger.info("Running wd14 tagger with onnx")
-        logger.info(f"loading onnx model: {onnx_path}")
+        print("Running wd14 tagger with onnx")
+        print(f"loading onnx model: {onnx_path}")
 
         if not os.path.exists(onnx_path):
             raise Exception(
@@ -136,7 +136,7 @@ def main(args):
 
         if args.batch_size != batch_size and not isinstance(batch_size, str) and batch_size > 0:
             # some rebatch model may use 'N' as dynamic axes
-            logger.warning(
+            print(
                 f"Batch size {args.batch_size} doesn't match onnx model batch size {batch_size}, use model batch size {batch_size}"
             )
             args.batch_size = batch_size
@@ -206,7 +206,7 @@ def main(args):
             assert len(tags) == 2, f"tag replacement must be in the format of `source,target` / タグの置換は `置換元,置換先` の形式で指定してください: {args.tag_replacement}"
 
             source, target = [tag.replace("@@@@", ",").replace("####", ";") for tag in tags]
-            logger.info(f"replacing tag: {source} -> {target}")
+            print(f"replacing tag: {source} -> {target}")
 
             if source in general_tags:
                 general_tags[general_tags.index(source)] = target
@@ -218,7 +218,7 @@ def main(args):
     # 画像を読み込む
     train_data_dir_path = Path(args.train_data_dir)
     image_paths = train_util.glob_images_pathlib(train_data_dir_path, args.recursive)
-    logger.info(f"found {len(image_paths)} images.")
+    print(f"found {len(image_paths)} images.")
 
     tag_freq = {}
 
@@ -322,11 +322,11 @@ def main(args):
             with open(caption_file, "wt", encoding="utf-8") as f:
                 f.write(tag_text + "\n")
                 if args.debug:
-                    logger.info("")
-                    logger.info(f"{image_path}:")
-                    logger.info(f"\tRating tags: {rating_tag_text}")
-                    logger.info(f"\tCharacter tags: {character_tag_text}")
-                    logger.info(f"\tGeneral tags: {general_tag_text}")
+                    print("")
+                    print(f"{image_path}:")
+                    print(f"\tRating tags: {rating_tag_text}")
+                    print(f"\tCharacter tags: {character_tag_text}")
+                    print(f"\tGeneral tags: {general_tag_text}")
 
     # 読み込みの高速化のためにDataLoaderを使うオプション
     if args.max_data_loader_n_workers is not None:
@@ -375,7 +375,7 @@ def main(args):
         for tag, freq in sorted_tags:
             print(f"{tag}: {freq}")
 
-    logger.info("done!")
+    print("done!")
 
 
 def setup_parser() -> argparse.ArgumentParser:

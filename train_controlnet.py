@@ -77,11 +77,11 @@ def train(args):
     # データセットを準備する
     blueprint_generator = BlueprintGenerator(ConfigSanitizer(False, False, True, True))
     if use_user_config:
-        logger.info(f"Load dataset config from {args.dataset_config}")
+        print(f"Load dataset config from {args.dataset_config}")
         user_config = config_util.load_user_config(args.dataset_config)
         ignored = ["train_data_dir", "conditioning_data_dir"]
         if any(getattr(args, attr) is not None for attr in ignored):
-            logger.warning(
+            print(
                 "ignore following options because config file is found: {0} / 設定ファイルが利用されるため以下のオプションは無視されます: {0}".format(
                     ", ".join(ignored)
                 )
@@ -124,7 +124,7 @@ def train(args):
         ), "when caching latents, either color_aug or random_crop cannot be used / latentをキャッシュするときはcolor_augとrandom_cropは使えません"
 
     # acceleratorを準備する
-    logger.info("prepare accelerator")
+    print("prepare accelerator")
     accelerator = train_util.prepare_accelerator(args)
     is_main_process = accelerator.is_main_process
 
@@ -342,7 +342,7 @@ def train(args):
     accelerator.print(
         f"  batch size per device / バッチサイズ: {', '.join([str(d.batch_size) for d in train_dataset_group.datasets])}"
     )
-    # logger.info(f"  total train batch size (with parallel & distributed & accumulation) / 総バッチサイズ（並列学習、勾配合計含む）: {total_batch_size}")
+    # print(f"  total train batch size (with parallel & distributed & accumulation) / 総バッチサイズ（並列学習、勾配合計含む）: {total_batch_size}")
     accelerator.print(f"  gradient accumulation steps / 勾配を合計するステップ数 = {args.gradient_accumulation_steps}")
     accelerator.print(f"  total optimization steps / 学習ステップ数: {args.max_train_steps}")
 
@@ -600,7 +600,7 @@ def train(args):
         ckpt_name = train_util.get_last_ckpt_name(args, "." + args.save_model_as)
         save_model(ckpt_name, controlnet, force_sync_upload=True)
 
-        logger.info("model saved.")
+        print("model saved.")
 
 
 def setup_parser() -> argparse.ArgumentParser:
